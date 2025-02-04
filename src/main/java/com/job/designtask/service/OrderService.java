@@ -1,15 +1,21 @@
 package com.job.designtask.service;
 
+import com.job.designtask.exception.ErrorMessage;
 import com.job.designtask.exception.OrderProcessingException;
 import com.job.designtask.exception.OrderUpdateError;
 import com.job.designtask.model.OrderRequest;
 import com.job.designtask.model.dto.OrderRequestDTO;
 import com.job.designtask.repository.OrderRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +33,7 @@ public class OrderService {
 
     private void updateExistingOrder(OrderRequest order, OrderRequestDTO orderRequestDto) {
             //TODO jebie sie walidacja
-            orderUpdateValidator.validateOrderUpdate(order, orderRequestDto);
+//            orderUpdateValidator.validateOrderUpdate(order, orderRequestDto);
             order.setStatusCode(orderRequestDto.getStatusCode());
             orderRepository.save(order);
     }
