@@ -1,6 +1,6 @@
-package com.job.designcodingtask.config;
+package com.job.designtask.config;
 
-import com.job.designcodingtask.model.dto.OrderRequestDto;
+import com.job.designtask.model.dto.OrderRequestDTO;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +10,6 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
@@ -24,15 +23,14 @@ public class KafkaConsumerConfig {
     private String bootstrapAddress;
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderRequestDto> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, OrderRequestDto> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, OrderRequestDTO> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, OrderRequestDTO> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         return factory;
     }
 
-    private ConsumerFactory<String, OrderRequestDto> consumerFactory() {
+    private ConsumerFactory<String, OrderRequestDTO> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);

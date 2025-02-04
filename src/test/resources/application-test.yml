@@ -1,0 +1,33 @@
+#server:
+#  port: 8081
+#
+#spring:
+#  application:
+#    name: my-app-test
+#  datasource:
+#    url: jdbc:h2:mem:mydb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+#    driverClassName: org.h2.Driver
+#    username: sa
+#    password: password
+#  jpa:
+#    database-platform: org.hibernate.dialect.H2Dialect
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: create-drop
+#  liquibase:
+#    enabled: true
+#    change-log: classpath:changelog-master-test.xml
+#
+#app:
+#  async:
+#    thread-pool:
+#      core-size: 2
+#      max-size: 2
+#      queue-capacity: 50
+#      thread-name-prefix: TestAsyncTask-
+#      wait-for-tasks: true
+#
+#logging:
+#  level:
+#    root: INFO
+#    org.hibernate.SQL: DEBUG

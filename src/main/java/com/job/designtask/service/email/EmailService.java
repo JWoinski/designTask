@@ -1,9 +1,5 @@
-package com.job.designcodingtask.service.email;
+package com.job.designtask.service.email;
 
-import org.springframework.stereotype.Service;
-
-@Service
-public class EmailService {
-    public void sendEmail(String to, String subject, String body) {
-    }
+public interface EmailService {
+    void sendEmail(String to, String subject, String body, int code);
 }

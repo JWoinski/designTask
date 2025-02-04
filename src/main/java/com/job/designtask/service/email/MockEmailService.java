@@ -1,13 +1,26 @@
-package com.job.designcodingtask.service.email;
+package com.job.designtask.service.email;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
-public class MockEmailService extends EmailService {
+public class MockEmailService implements EmailService {
     @Override
-    public void sendEmail(String to, String subject, String body) {
-        log.info("Sending email to {}", to);
+    public void sendEmail(String to, String subject, String body, int code) {
+        String statusDescription = getStatusDescription(code);
+        System.out.println("Email to " + to + " has been sent.");
+        System.out.println("Subject: " + subject);
+        System.out.println("Body: " + body);
+        System.out.println("Order status: " + statusDescription);
+    }
+
+    private String getStatusDescription(int code) {
+        return switch (code) {
+            case 0 -> "New order received";
+            case 10 -> "Order is being prepared";
+            case 20 -> "Order is being packed";
+            case 50 -> "Order has been shipped";
+            case 100 -> "Order has been delivered";
+            default -> "Unknown status";
+        };
     }
 }

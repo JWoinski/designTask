@@ -1,9 +1,6 @@
-package com.job.designcodingtask.model;
+package com.job.designtask.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -25,8 +22,8 @@ public class OrderRequest {
     private UUID orderId;
     @NotEmpty(message = "Shipment number is required")
     private String shipmentNumber;
-    @NotEmpty(message = "Receiver email should not be empty")
-    @Email(message = "Receiver email should be a valid email address")
+    @Email(message = "Email is not valid")
+    @NotEmpty(message = "Email cannot be empty")
     private String receiverEmail;
 
     @NotEmpty(message = "Receiver country code is required")
@@ -37,6 +34,4 @@ public class OrderRequest {
 
     @NotNull(message = "Status code is required")
     private int statusCode;
-
-
 }
