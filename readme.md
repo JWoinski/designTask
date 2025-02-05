@@ -8,8 +8,8 @@ application is built using the latest Java, Spring Boot, Kafka, PostgreSQL, and 
 
 1. [Technologies Used](#technologies-used)
 2. [Setup and Installation](#setup-and-installation)
-3. [Architecture Description](#Architecture Description:)
-4. [Order Flow](#Order Flow Description)
+3. [Architecture Description](#architecture-description)
+4. [Order Flow](#orderflow-description)
 
 ## Technologies Used
 
