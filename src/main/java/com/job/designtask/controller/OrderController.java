@@ -24,5 +24,4 @@ public class OrderController {
         orderMessageService.processOrder(orderRequest);
         return new ResponseEntity<>(new ApiResponse<>("Order has been received."), HttpStatus.OK);
     }
-
 }
