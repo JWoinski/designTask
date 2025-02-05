@@ -5,12 +5,12 @@ import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.stereotype.Component;
 
-
 import java.time.LocalDateTime;
+
 @Component
-public class ConverterDTO implements Converter<OrderRequestDTO,OrderRequest> {
+public class ConverterDTO implements Converter<OrderRequestDTO, OrderRequest> {
     @Override
-    public OrderRequest convert(MappingContext<OrderRequestDTO,OrderRequest> mappingContext) {
+    public OrderRequest convert(MappingContext<OrderRequestDTO, OrderRequest> mappingContext) {
         OrderRequestDTO command = mappingContext.getSource();
         return OrderRequest.builder()
                 .shipmentNumber(command.getShipmentNumber())

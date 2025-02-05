@@ -1,4 +1,5 @@
 package com.job.designtask.exception;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Value;

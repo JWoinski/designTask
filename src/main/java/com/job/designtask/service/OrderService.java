@@ -15,8 +15,8 @@ public class OrderService {
     private final ModelMapper modelMapper;
 
     public void saveOrderLog(OrderRequestDTO orderRequestDto) {
-        if(orderRequestDto != null) {
-            orderRepository.save(modelMapper.map(orderRequestDto,OrderRequest.class));
+        if (orderRequestDto != null) {
+            orderRepository.save(modelMapper.map(orderRequestDto, OrderRequest.class));
         }
     }
 }

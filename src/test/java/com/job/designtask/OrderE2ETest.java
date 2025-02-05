@@ -31,6 +31,7 @@ class OrderE2ETest {
     private OrderRepository orderRepository;
     @Autowired
     private DataBaseCleaner dataBaseCleaner;
+
     @BeforeEach
     void tearDown() throws LiquibaseException {
         dataBaseCleaner.cleanUp();
@@ -61,6 +62,7 @@ class OrderE2ETest {
                         order.getSenderCountryCode().equals("UK") &&
                         order.getStatusCode() == 1);
     }
+
     @Test
     void whenOrderIsNotSubmittedEmptyShipmentNumber_thenItNotSavedToDatabase() throws Exception {
         // given
@@ -87,6 +89,7 @@ class OrderE2ETest {
                         order.getSenderCountryCode().equals("UK") &&
                         order.getStatusCode() == 1);
     }
+
     @Test
     void whenOrderIsNotSubmittedEmptyReceiverEmail_thenItNotSavedToDatabase() throws Exception {
         // given
@@ -113,6 +116,7 @@ class OrderE2ETest {
                         order.getSenderCountryCode().equals("UK") &&
                         order.getStatusCode() == 1);
     }
+
     @Test
     void whenOrderIsNotSubmittedEmptyReceiverCountryCode_thenItNotSavedToDatabase() throws Exception {
         // given
@@ -139,6 +143,7 @@ class OrderE2ETest {
                         order.getSenderCountryCode().equals("UK") &&
                         order.getStatusCode() == 1);
     }
+
     @Test
     void whenOrderIsNotSubmittedEmptySenderCountryCode_thenItNotSavedToDatabase() throws Exception {
         // given
@@ -165,6 +170,7 @@ class OrderE2ETest {
                         order.getSenderCountryCode().isEmpty() &&
                         order.getStatusCode() == 1);
     }
+
     @Test
     void whenOrderIsNotSubmittedStatusCodeBelow0_thenItNotSavedToDatabase() throws Exception {
         // given
@@ -190,6 +196,7 @@ class OrderE2ETest {
                         order.getReceiverCountryCode().equals("US") &&
                         order.getSenderCountryCode().equals("UK"));
     }
+
     @Test
     void whenOrderIsNotSubmittedStatusCodeAbove100_thenItNotSavedToDatabase() throws Exception {
         // given
@@ -215,6 +222,7 @@ class OrderE2ETest {
                         order.getReceiverCountryCode().equals("US") &&
                         order.getSenderCountryCode().equals("UK"));
     }
+
     @Test
     void whenOrderIsNotSubmittedNullSenderCountryCode_thenItNotSavedToDatabase() throws Exception {
         // given
@@ -240,13 +248,14 @@ class OrderE2ETest {
                         order.getReceiverCountryCode().equals("US") &&
                         order.getStatusCode() == 100);
     }
+
     @Test
     void whenOrderIsNotSubmittedNullReceiverCountryCode_thenItNotSavedToDatabase() throws Exception {
         // given
         OrderRequestDTO orderRequestDto = OrderRequestDTO.builder()
                 .shipmentNumber("123EXP")
                 .receiverEmail("test@gmail.com")
-               // missing receiver country code
+                // missing receiver country code
                 .senderCountryCode("UK")
                 .statusCode(100)
                 .build();

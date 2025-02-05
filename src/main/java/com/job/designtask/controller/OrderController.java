@@ -22,7 +22,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<ApiResponse<String>> handleOrder(@Valid @RequestBody OrderRequestDTO orderRequest) {
         orderMessageService.processOrder(orderRequest);
-        return new ResponseEntity<>(new ApiResponse<>("Order has been received."),HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>("Order has been received."), HttpStatus.OK);
     }
 
 }

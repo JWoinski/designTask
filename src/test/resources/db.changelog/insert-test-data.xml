@@ -5,7 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <changeSet author="Jan" id="1-insert-order-requests">
-        <loadData encoding="UTF-8" file="data/orderRequest.csv" quotchar="&quot;" separator="," tableName="order_request">
+        <loadData encoding="UTF-8" file="data/orderRequest.csv" quotchar="&quot;" separator=","
+                  tableName="order_request">
             <column header="orderId" name="order_id"/>
             <column header="shipmentNumber" name="shipment_number"/>
             <column header="receiverEmail" name="receiver_email"/>

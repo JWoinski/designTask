@@ -1,8 +1,5 @@
 package com.job.designtask;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.job.designtask.config.KafkaConfig;
 import com.job.designtask.model.ApiResponse;
@@ -17,6 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -106,6 +106,7 @@ class OrderControllerTest extends KafkaConfig {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.receiverCountryCode").value("Country code of receiver is required"));
     }
+
     @Test
     void whenInvalidSenderCountryCode_thenReturns400() throws Exception {
         // given
@@ -187,6 +188,7 @@ class OrderControllerTest extends KafkaConfig {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.receiverEmail").value("Email of receiver is required"));
     }
+
     @Test
     void whenMissingReceiverCountryCode_thenReturns400() throws Exception {
         // given
@@ -206,6 +208,7 @@ class OrderControllerTest extends KafkaConfig {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.receiverCountryCode").value("Country code of receiver is required"));
     }
+
     @Test
     void whenMissingSenderCountryCode_thenReturns400() throws Exception {
         // given
@@ -225,6 +228,7 @@ class OrderControllerTest extends KafkaConfig {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.senderCountryCode").value("Country code of sender is required"));
     }
+
     @Test
     void whenMissingStatusCode_thenReturns400() throws Exception {
         // given

@@ -11,7 +11,6 @@ application is built using the latest Java, Spring Boot, Kafka, PostgreSQL, and 
 3. [Architecture Description](#Architecture Description:)
 4. [Order Flow](#Order Flow Description)
 
-
 ## Technologies Used
 
 ### 1. **Java 21**
@@ -107,30 +106,35 @@ structure.
 
 ![DiagramUML.png](src/main/resources/DiagramUML.png)
 
-
 # OrderFlow Description
 
-This document describes the full flow of the order processing system, covering how an order request is received, processed, and logged, including interactions with Kafka and email notifications.
+This document describes the full flow of the order processing system, covering how an order request is received,
+processed, and logged, including interactions with Kafka and email notifications.
 
 ## **Flow Overview**
 
 1. **Step 1:** Client sends an HTTP POST request to the endpoint `POST /api/orders` with the order details in the body.
-2. **Step 2:** The `OrderController` processes the request and sends the order to the Kafka topic `order-requests` using the `OrderMessageService`.
+2. **Step 2:** The `OrderController` processes the request and sends the order to the Kafka topic `order-requests` using
+   the `OrderMessageService`.
 3. **Step 3:** Kafka propagates the message, and the `OrderListener` listens for messages from the topic.
 4. **Step 4:** Upon receiving the message, the `OrderListener` processes it by:
-  - Saving the order to the database through the `OrderService`
-  - Sending a confirmation email via the `MockEmailService`
+
+- Saving the order to the database through the `OrderService`
+- Sending a confirmation email via the `MockEmailService`
 
 ## **Detailed Flow**
 
 ### 1. **Receiving the Order Request**
+
 **Controller:** `OrderController`
 
 - **Endpoint:** `POST /api/orders`
 - **Method:** `handleOrder`
-- **Description:** This endpoint accepts an order request (`OrderRequestDTO`) and forwards it to Kafka using the `OrderMessageService`.
+- **Description:** This endpoint accepts an order request (`OrderRequestDTO`) and forwards it to Kafka using the
+  `OrderMessageService`.
 
 ```java
+
 @PostMapping
 public ResponseEntity<ApiResponse<String>> handleOrder(@Valid @RequestBody OrderRequestDTO orderRequest) {
     orderMessageService.processOrder(orderRequest);
@@ -139,6 +143,7 @@ public ResponseEntity<ApiResponse<String>> handleOrder(@Valid @RequestBody Order
 ```
 
 ### 2. **Sending the Order to Kafka**
+
 **Service:** `OrderMessageService`
 
 - **Method:** `processOrder`
@@ -146,6 +151,7 @@ public ResponseEntity<ApiResponse<String>> handleOrder(@Valid @RequestBody Order
 - **Description:** Sends the order message asynchronously to the Kafka topic.
 
 ```java
+
 @Async("asyncTaskExecutor")
 public void processOrder(OrderRequestDTO orderRequest) {
     kafkaTemplate.send(ORDER_TOPIC, orderRequest);
@@ -153,6 +159,7 @@ public void processOrder(OrderRequestDTO orderRequest) {
 ```
 
 ### 3. **Listening for Kafka Messages**
+
 **Service:** `OrderListener`
 
 - **Kafka Listener:** Listens for messages on the `order-requests` topic.
@@ -160,30 +167,32 @@ public void processOrder(OrderRequestDTO orderRequest) {
 - **Description:** Processes the received message by saving it to the database and sending an email confirmation.
 
 ```java
+
 @KafkaListener(
-    topics = ORDER_REQUEST_TOPIC,
-    groupId = ORDER_REQUEST_GROUP,
-    containerFactory = ORDER_REQUEST_CONTAINER_FACTORY
+        topics = ORDER_REQUEST_TOPIC,
+        groupId = ORDER_REQUEST_GROUP,
+        containerFactory = ORDER_REQUEST_CONTAINER_FACTORY
 )
 public void onMessage(ConsumerRecord<String, OrderRequestDTO> record) {
     Optional.ofNullable(record.value()).ifPresentOrElse(
-        orderRequestDto -> {
-            orderService.saveOrderLog(orderRequestDto);
-            emailService.sendEmail(
-                orderRequestDto.getReceiverEmail(),
-                "Order confirmation",
-                "Your order " + orderRequestDto.getShipmentNumber() + " has been received",
-                orderRequestDto.getStatusCode()
-            );
-        },
-        () -> {
-            throw new OrderProcessingException("Received null OrderRequestDto");
-        }
+            orderRequestDto -> {
+                orderService.saveOrderLog(orderRequestDto);
+                emailService.sendEmail(
+                        orderRequestDto.getReceiverEmail(),
+                        "Order confirmation",
+                        "Your order " + orderRequestDto.getShipmentNumber() + " has been received",
+                        orderRequestDto.getStatusCode()
+                );
+            },
+            () -> {
+                throw new OrderProcessingException("Received null OrderRequestDto");
+            }
     );
 }
 ```
 
 ### 4. **Saving the Order to the Database**
+
 **Service:** `OrderService`
 
 - **Method:** `saveOrderLog`
@@ -198,12 +207,14 @@ public void saveOrderLog(OrderRequestDTO orderRequestDto) {
 ```
 
 ### 5. **Sending Email Confirmation**
+
 **Service:** `MockEmailService` (implements `EmailService`)
 
 - **Method:** `sendEmail`
 - **Description:** Sends an email with the order confirmation.
 
 ```java
+
 @Override
 public void sendEmail(String to, String subject, String body, int code) {
     String statusDescription = getStatusDescription(code);
@@ -216,12 +227,12 @@ public void sendEmail(String to, String subject, String body, int code) {
 
 ## **Summary of Key Components**
 
-| Component              | Responsibility                                      |
-|-----------------------|---------------------------------------------------|
-| `OrderController`      | Handles incoming HTTP POST requests               |
-| `OrderMessageService`  | Sends order messages to Kafka asynchronously      |
-| `OrderListener`        | Listens to Kafka messages and processes orders    |
-| `OrderService`         | Saves orders to the database                      |
-| `OrderRepository`      | Repository for saving and retrieving orders       |
-| `MockEmailService`     | Sends email notifications                         |
+| Component             | Responsibility                                 |
+|-----------------------|------------------------------------------------|
+| `OrderController`     | Handles incoming HTTP POST requests            |
+| `OrderMessageService` | Sends order messages to Kafka asynchronously   |
+| `OrderListener`       | Listens to Kafka messages and processes orders |
+| `OrderService`        | Saves orders to the database                   |
+| `OrderRepository`     | Repository for saving and retrieving orders    |
+| `MockEmailService`    | Sends email notifications                      |
 

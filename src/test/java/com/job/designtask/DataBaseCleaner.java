@@ -10,6 +10,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
