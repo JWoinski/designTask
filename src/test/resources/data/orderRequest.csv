@@ -1,0 +1,6 @@
+shipment_number,receiver_email,receiver_country_code,sender_country_code,status_code
+12345,test@wp.pl,US,UK,0
+12346,test2@wp.pl,US,UK,10
+12347,test3@wp.pl,US,UK,10
+12348,test4@wp.pl,US,UK,10
+12349,test5@wp.pl,US,UK,10

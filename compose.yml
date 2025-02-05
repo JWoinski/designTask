@@ -66,7 +66,25 @@ services:
       - "5050:80"
     depends_on:
       - postgres
-
+  app:
+    image: openjdk:17
+    container_name: java_app
+    working_dir: /app
+    volumes:
+      - ./app:/app
+    command: ["java", "-jar", "designTask-0.0.1-SNAPSHOT.jar"]
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      DB_HOST: postgres_db
+      DB_PORT: 5432
+      DB_NAME: mydb
+      DB_USER: user
+      DB_PASSWORD: password
+      KAFKA_BROKER: kafka:19091
+    ports:
+      - "8081:8080"
 volumes:
   postgres_data:
   pgadmin:

@@ -1,4 +1,4 @@
-package com.job.designtask.config;
+package com.job.designtask.config.async;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

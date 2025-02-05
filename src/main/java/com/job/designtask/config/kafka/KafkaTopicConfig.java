@@ -1,4 +1,4 @@
-package com.job.designtask.config;
+package com.job.designtask.config.kafka;
 
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;

@@ -1,28 +1,27 @@
 package com.job.designtask.model.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class OrderRequestDTO {
-    @NotEmpty(message = "Shipment number is required")
+    @NotBlank(message = "Shipment number is required")
     private String shipmentNumber;
     @Email(message = "Email is not valid")
-    @NotEmpty(message = "Email cannot be empty")
+    @NotBlank(message = "Email of receiver is required")
     private String receiverEmail;
 
-    @NotEmpty(message = "Receiver country code is required")
+    @NotBlank(message = "Country code of receiver is required")
     private String receiverCountryCode;
 
-    @NotEmpty(message = "Sender country code is required")
+    @NotBlank(message = "Country code of sender is required")
     private String senderCountryCode;
 
     @NotNull(message = "Status code is required")

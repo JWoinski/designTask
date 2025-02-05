@@ -107,61 +107,121 @@ structure.
 
 ![DiagramUML.png](src/main/resources/DiagramUML.png)
 
-# Order Flow Description
 
-Below is a step-by-step overview of what happens in the system when a request to create an order is processed. You can
-include the following information in your **README.md** file to explain how the application works.
+# OrderFlow Description
 
----
+This document describes the full flow of the order processing system, covering how an order request is received, processed, and logged, including interactions with Kafka and email notifications.
 
-## 1. Client sends a `POST /api/orders` request
+## **Flow Overview**
 
-- The request body contains an `OrderRequestDto` object (including, among others, `shipmentNumber`, `receiverEmail`,
-  `countryCode`, etc.).
+1. **Step 1:** Client sends an HTTP POST request to the endpoint `POST /api/orders` with the order details in the body.
+2. **Step 2:** The `OrderController` processes the request and sends the order to the Kafka topic `order-requests` using the `OrderMessageService`.
+3. **Step 3:** Kafka propagates the message, and the `OrderListener` listens for messages from the topic.
+4. **Step 4:** Upon receiving the message, the `OrderListener` processes it by:
+  - Saving the order to the database through the `OrderService`
+  - Sending a confirmation email via the `MockEmailService`
 
-## 2. Request received by `OrderController`
+## **Detailed Flow**
 
-- The method `handleOrder(orderRequestDto: OrderRequestDto)` receives the incoming request data.
-- The controller serves as the entry point to the application—this is where the business logic begins.
+### 1. **Receiving the Order Request**
+**Controller:** `OrderController`
 
-## 3. Passing the request to `OrderMessageService`
+- **Endpoint:** `POST /api/orders`
+- **Method:** `handleOrder`
+- **Description:** This endpoint accepts an order request (`OrderRequestDTO`) and forwards it to Kafka using the `OrderMessageService`.
 
-- After the `OrderRequestDto` is received, the controller calls the `processOrder(orderRequestDto)` method in the
-  service layer responsible for asynchronous communication.
-- `OrderMessageService` sends a message to Kafka by using `kafkaTemplate.send()`.
+```java
+@PostMapping
+public ResponseEntity<ApiResponse<String>> handleOrder(@Valid @RequestBody OrderRequestDTO orderRequest) {
+    orderMessageService.processOrder(orderRequest);
+    return new ResponseEntity<>(new ApiResponse<>("Order has been received."), HttpStatus.OK);
+}
+```
 
-## 4. Publishing a message to Kafka
+### 2. **Sending the Order to Kafka**
+**Service:** `OrderMessageService`
 
-- The `OrderRequestDto` data is wrapped into a `ConsumerRecord<String, OrderRequestDto>` object and sent to the
-  appropriate Kafka topic.
+- **Method:** `processOrder`
+- **Kafka Topic:** `order-requests`
+- **Description:** Sends the order message asynchronously to the Kafka topic.
 
-## 5. Message consumed by `OrderListener`
+```java
+@Async("asyncTaskExecutor")
+public void processOrder(OrderRequestDTO orderRequest) {
+    kafkaTemplate.send(ORDER_TOPIC, orderRequest);
+}
+```
 
-- `OrderListener` listens (subscribes) to the specified Kafka topic.
-- Once a new message arrives, the method `onMessage(record: ConsumerRecord<String, OrderRequestDto>)` is invoked.
+### 3. **Listening for Kafka Messages**
+**Service:** `OrderListener`
 
-## 6. Processing the order in `OrderListener`
+- **Kafka Listener:** Listens for messages on the `order-requests` topic.
+- **Method:** `onMessage`
+- **Description:** Processes the received message by saving it to the database and sending an email confirmation.
 
-- Inside `onMessage`, the `OrderRequestDto` is read and the following actions take place:
-    - **(a)** `sendEmail()` – the email service (in this case, `MockEmailService`) is called to send an email to the
-      `receiverEmail`.
-    - **(b)** `processOrderUpdate(orderRequestDto)` – the method in `OrderService` is called to save the order data.
+```java
+@KafkaListener(
+    topics = ORDER_REQUEST_TOPIC,
+    groupId = ORDER_REQUEST_GROUP,
+    containerFactory = ORDER_REQUEST_CONTAINER_FACTORY
+)
+public void onMessage(ConsumerRecord<String, OrderRequestDTO> record) {
+    Optional.ofNullable(record.value()).ifPresentOrElse(
+        orderRequestDto -> {
+            orderService.saveOrderLog(orderRequestDto);
+            emailService.sendEmail(
+                orderRequestDto.getReceiverEmail(),
+                "Order confirmation",
+                "Your order " + orderRequestDto.getShipmentNumber() + " has been received",
+                orderRequestDto.getStatusCode()
+            );
+        },
+        () -> {
+            throw new OrderProcessingException("Received null OrderRequestDto");
+        }
+    );
+}
+```
 
-## 7. Writing to the database in `OrderService`
+### 4. **Saving the Order to the Database**
+**Service:** `OrderService`
 
-- `OrderService` provides a `saveOrder(orderRequestDto)` method, which maps the DTO to the `OrderRequest` entity (via a
-  builder) and then calls `OrderRepository.save(orderRequest)`.
-- `OrderRepository` (an interface) handles communication with the database layer—ultimately, the order is stored in a
-  table/record in the database.
+- **Method:** `saveOrderLog`
+- **Description:** Converts the DTO to an entity and saves it in the database using `OrderRepository`.
 
-## 8. Completion of processing
+```java
+public void saveOrderLog(OrderRequestDTO orderRequestDto) {
+    if (orderRequestDto != null) {
+        orderRepository.save(modelMapper.map(orderRequestDto, OrderRequest.class));
+    }
+}
+```
 
-- After successfully saving the order and optionally sending an email, the system completes request handling.
-- The client (user) receives confirmation that the order was accepted for processing.
+### 5. **Sending Email Confirmation**
+**Service:** `MockEmailService` (implements `EmailService`)
 
----
+- **Method:** `sendEmail`
+- **Description:** Sends an email with the order confirmation.
 
-### Docker:
+```java
+@Override
+public void sendEmail(String to, String subject, String body, int code) {
+    String statusDescription = getStatusDescription(code);
+    System.out.println("Email to " + to + " has been sent.");
+    System.out.println("Subject: " + subject);
+    System.out.println("Body: " + body);
+    System.out.println("Order status: " + statusDescription);
+}
+```
 
-All components (including the application, Kafka, and PostgreSQL) are run in Docker containers, providing easy configuration
-and deployment of the application across different environments (local, production).
+## **Summary of Key Components**
+
+| Component              | Responsibility                                      |
+|-----------------------|---------------------------------------------------|
+| `OrderController`      | Handles incoming HTTP POST requests               |
+| `OrderMessageService`  | Sends order messages to Kafka asynchronously      |
+| `OrderListener`        | Listens to Kafka messages and processes orders    |
+| `OrderService`         | Saves orders to the database                      |
+| `OrderRepository`      | Repository for saving and retrieving orders       |
+| `MockEmailService`     | Sends email notifications                         |
+

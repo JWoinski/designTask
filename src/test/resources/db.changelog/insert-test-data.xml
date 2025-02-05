@@ -1,0 +1,18 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet author="Jan" id="1-insert-order-requests">
+        <loadData encoding="UTF-8" file="data/orderRequest.csv" quotchar="&quot;" separator="," tableName="order_request">
+            <column header="orderId" name="order_id"/>
+            <column header="shipmentNumber" name="shipment_number"/>
+            <column header="receiverEmail" name="receiver_email"/>
+            <column header="receiverCountryCode" name="receiver_country_code"/>
+            <column header="senderCountryCode" name="sender_country_code"/>
+            <column header="statusCode" name="status_code"/>
+        </loadData>
+    </changeSet>
+
+</databaseChangeLog>

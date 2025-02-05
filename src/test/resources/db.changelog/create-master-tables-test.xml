@@ -25,6 +25,9 @@
             <column name="status_code" type="int">
                 <constraints nullable="false"/>
             </column>
+            <column name="received_at" type="date">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
 

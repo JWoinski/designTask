@@ -1,4 +1,4 @@
-package com.job.designtask.config;
+package com.job.designtask.config.kafka;
 
 import com.job.designtask.model.dto.OrderRequestDTO;
 import org.apache.kafka.clients.producer.ProducerConfig;

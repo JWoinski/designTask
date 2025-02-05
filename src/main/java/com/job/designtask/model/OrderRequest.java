@@ -1,14 +1,13 @@
 package com.job.designtask.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -20,18 +19,21 @@ public class OrderRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID orderId;
-    @NotEmpty(message = "Shipment number is required")
+    @NotBlank(message = "Shipment number is required")
     private String shipmentNumber;
     @Email(message = "Email is not valid")
-    @NotEmpty(message = "Email cannot be empty")
+    @NotBlank(message = "Email of receiver is required")
     private String receiverEmail;
 
-    @NotEmpty(message = "Receiver country code is required")
+    @NotBlank(message = "Conutry code of receiver is required")
     private String receiverCountryCode;
 
-    @NotEmpty(message = "Sender country code is required")
+    @NotBlank(message = "Country code of sender is required")
     private String senderCountryCode;
 
     @NotNull(message = "Status code is required")
+    @Min(value = 0, message = "Status code must be at least 0")
+    @Max(value = 100, message = "Status code must be at most 100")
     private int statusCode;
+    private LocalDateTime receivedAt;
 }

@@ -1,4 +1,4 @@
-package com.job.designtask;
+package com.job.designtask.config;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
