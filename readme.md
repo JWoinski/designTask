@@ -70,9 +70,9 @@ cd designTask
 docker-compose up --build
 ```
 
-### Configuration in application.properties
+### Configuration in application.yml
 
-You can modify the configuration in the src/main/resources/application.properties file to adjust any settings (e.g.,
+You can modify the configuration in the src/main/resources/application.yml file to adjust any settings (e.g.,
 Kafka, database, or email service configurations).
 
 ### Run the Application:
